@@ -1,7 +1,7 @@
 ﻿using AddressBookAPI.Entities.DataSets;
 using Microsoft.EntityFrameworkCore;
 
-namespace AddressBookAPI.DBContext
+namespace AddressBookAPI.Context
 {
     public class AddressBookDbContext: DbContext
     {
@@ -30,6 +30,9 @@ namespace AddressBookAPI.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<User>().HasAlternateKey(user => user.UserName);
+
             base.OnModelCreating(modelBuilder);
         } 
     }

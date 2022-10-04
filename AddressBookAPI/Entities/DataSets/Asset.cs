@@ -5,47 +5,54 @@ using System;
 
 namespace AddressBookAPI.Entities.DataSets
 {
+    [Table(name:"asset")]
     public class Asset
     {
-        private byte[] content;
 
         [Required]
         [NotNull]
         [Key]
+        [Column(name:"id")]
         public Guid Id { get; set; }
 
         [Required]
         [NotNull]
         [StringLength(maximumLength: 25, MinimumLength = 1, ErrorMessage = "Enter a valid filename")]
+        [Column(name: "file_name")]
         public string FileName { get; set; }
 
         [Required]
         [NotNull]
         [Url]
+        [Column(name: "download_url")]
         public string DownloadUrl { get; set; }
 
         [Required]
         [NotNull]
-        [ForeignKey("RefSetMappingId")]
-        public Guid FileTypeId { get; set; }
+        [Column(name: "file_type")]
+        public string FileType { get; set; }
 
         [Required]
         [NotNull]
-        public int size { get; set; }
+        [Column(name: "size")]
+        public decimal Size { get; set; }
 
         [Required]
         [NotNull]
-        public byte[] Content { get; set; }
+        [Column(name: "content")]
+        public string Content { get; set; }
 
         [Required]
         [NotNull]
         [ForeignKey("AddressBookId")]
+        [Column(name: "address_book_id")]
         public Guid AddressBookId { get; set; }
         public AddressBook AddressBook { get; set; }
 
         [Required]
         [NotNull]
         [ForeignKey("UserId")]
+        [Column(name: "user_id")]
         public Guid UserId { get; set; }
         public User User { get; set; }
     }
