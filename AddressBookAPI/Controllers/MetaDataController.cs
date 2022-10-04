@@ -31,8 +31,14 @@ namespace AddressBookAPI.Controllers
             _logger = logger;
             _log = LogManager.GetLogger(typeof(MetaDataController));
         }
-        
+
         //Refset controllers start
+
+        /// <summary>
+        /// Method to get refernce set
+        /// </summary>
+        /// <param name="Id">Id of reference set</param>
+        /// <returns>refernce set data</returns>
         [HttpGet("ref-set/{id}", Name = "GetRefSet")]
         public IActionResult GetRefSet(Guid Id)
         {
@@ -57,6 +63,11 @@ namespace AddressBookAPI.Controllers
             return Ok(refSetToReturn);
         }
 
+        /// <summary>
+        /// Method to create reference set
+        /// </summary>
+        /// <param name="refSetData">reference set data</param>
+        /// <returns>refernce set data with Id</returns>
         [HttpPost("ref-set")]
         public IActionResult AddRefSet([FromBody]RefSetCreationDTO refSetData)
         {
@@ -80,6 +91,11 @@ namespace AddressBookAPI.Controllers
             return CreatedAtRoute("GetRefSet", new { Id = refSetToReturn.Id }, refSetToReturn);
         }
 
+        /// <summary>
+        /// Method to delete reference set
+        /// </summary>
+        /// <param name="Id">reference set Id</param>
+        /// <returns>no content</returns>
         [HttpDelete("ref-set/{id}", Name = "DeleteRefSet")]
         public IActionResult DeleteRefSet(Guid Id)
         {
@@ -104,6 +120,12 @@ namespace AddressBookAPI.Controllers
         //Refset controllers end
 
         //RefTerm controller starts
+
+        /// <summary>
+        /// Method to get reference term
+        /// </summary>
+        /// <param name="Id">reference term Id</param>
+        /// <returns>refernce term data with Id</returns>
         [HttpGet("ref-term/{Id}", Name = "GetRefTerm")]
         public IActionResult GetRefTerm(Guid Id)
         {
@@ -128,6 +150,12 @@ namespace AddressBookAPI.Controllers
             return Ok(refTermToReturn);
         }
 
+        /// <summary>
+        /// Method to create reference term
+        /// </summary>
+        /// <param name="refSetId">reference set Id</param>
+        /// <param name="refTermData">refernce term data to create</param>
+        /// <returns>refernce term data with Id</returns>
         [HttpPost("ref-term/{refSetId}")]
         public IActionResult AddRefTerm(Guid refSetId,[FromBody] RefTermCreationDTO refTermData)
         {
@@ -165,6 +193,11 @@ namespace AddressBookAPI.Controllers
         //Refterm controllers end
 
         //get all refterms under a ref set
+        /// <summary>
+        /// Method to get list of reference term under a refernce set
+        /// </summary>
+        /// <param name="refSetId">reference set Id</param>
+        /// <returns>list of reference terms</returns>
         [HttpGet("ref-set/all/{refSetId}")]
         public IActionResult GetAllRefTerm(Guid refSetId)
         {

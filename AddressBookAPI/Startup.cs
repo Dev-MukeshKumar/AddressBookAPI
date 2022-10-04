@@ -128,9 +128,8 @@ namespace AddressBookAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
+
+                //exception handler
                 app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async c =>

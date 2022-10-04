@@ -30,6 +30,12 @@ namespace AddressBookAPI.Controllers
         }
 
         //Authentication and user creation controller
+
+        /// <summary>
+        /// Method to do user authentication
+        /// </summary>
+        /// <param name="user">user login credential data</param>
+        /// <returns>JSON Web Token</returns>
         [HttpPost, AllowAnonymous]
         [Route("auth")]
         public IActionResult AuthUser([FromBody]UserDTO user)
@@ -52,6 +58,11 @@ namespace AddressBookAPI.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Method to create user
+        /// </summary>
+        /// <param name="user">user data to be created</param>
+        /// <returns>user data with Id</returns>
         [HttpPost,AllowAnonymous]
         [Route("register")]
         public IActionResult CreateUser([FromBody] UserCreationDTO user)
@@ -71,6 +82,11 @@ namespace AddressBookAPI.Controllers
             return Ok(userToReturn);
         }
 
+        /// <summary>
+        /// Method to user data
+        /// </summary>
+        /// <param name="Id">user Id</param>
+        /// <returns>user data with id</returns>
         [HttpGet]
         [Route("{Id}")]
         public IActionResult GetUser(Guid Id)
@@ -104,6 +120,12 @@ namespace AddressBookAPI.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Method to update user data
+        /// </summary>
+        /// <param name="Id">User Id</param>
+        /// <param name="userData">user data to be updated</param>
+        /// <returns>user data with Id</returns>
         [HttpPut]
         [Route("{Id}")]
         public IActionResult UpdateUser(Guid Id, [FromBody]UserUpdationDTO userData)
@@ -141,6 +163,11 @@ namespace AddressBookAPI.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Method to delete an User
+        /// </summary>
+        /// <param name="Id">User Id</param>
+        /// <returns>no content</returns>
         [HttpDelete]
         [Route("{id}")]
         public IActionResult DeleteUser(Guid Id)
