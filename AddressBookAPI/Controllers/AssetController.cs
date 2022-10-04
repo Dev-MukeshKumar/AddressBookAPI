@@ -1,5 +1,4 @@
-﻿using AddressBookAPI.Helpers.RequestParameters;
-using AddressBookAPI.Services;
+﻿using AddressBookAPI.Services;
 using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,8 +8,6 @@ using System;
 using AddressBookAPI.Entities.Models;
 using AutoMapper;
 using AddressBookAPI.Entities.DataSets;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Http;
 
 namespace AddressBookAPI.Controllers
@@ -35,6 +32,12 @@ namespace AddressBookAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Method to upload an asset
+        /// </summary>
+        /// <param name="addressBookId">Address Book Id</param>
+        /// <param name="file">asset file</param>
+        /// <returns>asset meta data</returns>
         [HttpPost("{addressBookId}")]
         public IActionResult UploadAsset(Guid addressBookId,[FromForm]IFormFile file)
         {
@@ -80,6 +83,11 @@ namespace AddressBookAPI.Controllers
             return Ok(assetToReturn);
         }
 
+        /// <summary>
+        /// Method to upload an asset
+        /// </summary>
+        /// <param name="Id">Id of the Asset</param>
+        /// <returns>asset file</returns>
         [HttpGet("{Id}",Name ="DownloadImage")]
         public IActionResult DownloadAsset(Guid Id)
         {

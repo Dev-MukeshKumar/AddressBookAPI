@@ -1,4 +1,6 @@
-﻿namespace AddressBookAPI.Entities.Models
+﻿using System;
+
+namespace AddressBookAPI.Entities.Models
 {
     public class AddressDTO
     {
@@ -10,4 +12,11 @@
         public Type Type { get; set; }
         public Type Country { get; set; }
     }
+
+    public class AddressUpdationDTO: AddressDTO
+    {
+        public Guid Id { get; set; }
+    }
+
+    public class AddressToReturnDTO: AddressUpdationDTO { }
 }

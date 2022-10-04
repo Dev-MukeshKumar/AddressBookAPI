@@ -63,5 +63,18 @@ namespace AddressBookAPI.Services.Repositories
         {
             return _context.AddressBooks.Where(addressBook => addressBook.UserId == userId).ToList();
         }
+
+        public void UpdateAddressBook(AddressBook addressBook, IEnumerable<Email> Emails, IEnumerable<Address> Addresses, IEnumerable<Phone> Phones)
+        {
+
+            _context.AddressBooks.Update(addressBook);
+
+            _context.Emails.UpdateRange(Emails);
+
+            _context.Addresses.UpdateRange(Addresses);
+
+            _context.Phones.UpdateRange(Phones);
+
+        }
     }
 }
