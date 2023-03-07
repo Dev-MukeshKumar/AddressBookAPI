@@ -1,0 +1,916 @@
+openapi: 3.0.3
+
+info:
+  title: Address Book Assigment
+  description: Address book API to maintain contacts of an user.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+
+servers:
+  - url: http://localhost:3000/api
+
+tags:
+  - name: user
+    description: Operation for signin and signup
+  - name: account
+    description: Everything about your address books
+  - name: asset
+    description: Operation for image upload and download
+  - name: meta-data
+    description: Operation for metdata on types
+
+paths:
+  /auth/signin:
+    post:
+      tags:
+        - user
+      summary: authenticate and create user
+      description: used to authenticate and create user.
+      operationId: authenticateCreateUser
+      requestBody:
+        description: user object
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '200':
+          description: authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid request data
+        '401':
+          description: User authentication data is incorrect
+        '500':
+          description: Internal server error
+      security: []   
+  /user/{id}:
+    get:
+      tags:
+        - user
+      summary: Get user by id
+      description: ''
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: The user id that needs to be fetched.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: User id that need to be updated.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdationDTO'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserUpdationDTO'
+      responses:
+        '200':
+          description: Updation successful
+        '400':
+          description: Invalid id supplied
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: User id that needs to be deleted
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: user deleted successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '400':
+          description: Invalid id supplied
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+
+  /account/{id}:
+    get:
+      tags:
+        - account
+      summary: Get address book by ID
+      description: Returns a single address book
+      operationId: getAddressBookById
+      parameters:
+        - name: id
+          in: path
+          description: Id of address book to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressBook'       
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddressBook'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: address book not found
+        '500':
+          description: Internal server error
+    put:
+      tags:
+        - account
+      summary: Update an existing address book
+      description: Update an existing address book by Id
+      operationId: updateAddressBook
+      parameters:
+        - name: id
+          in: path
+          description: ID of address book to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update object of an existent address book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressBook'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddressBook'
+        required: true
+      responses:
+        '200':
+          description: Address book updated
+        '400':
+          description: Invalid ID supplied
+        '401':
+           $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Address book not found
+        '405':
+          description: Given key type is not valid
+        '409':
+          description: some data already exists in other address book
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - account
+      summary: Deletes an address book
+      description: delete an address book
+      operationId: deleteAddressBook
+      parameters:
+        - name: id
+          in: path
+          description: address book id to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Address book deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressBook'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddressBook'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Address book not found
+        '500':
+          description: Internal server error
+  /account:
+    post:
+      tags:
+        - account
+      summary: Add a new address book
+      description: Add a new address book
+      operationId: addAddressBook
+      requestBody:
+        description: Create a new address book
+        $ref: '#/components/requestBodies/AddressBook'
+        required: true
+      responses:
+        '201':
+          description: Created given address book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressBook'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddressBook'
+        '400':
+          description: Invalid input address book data
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: given type key not found
+        '409':
+          description: Given input already exists
+        '500':
+          description: Internal server error
+    get:
+      tags:
+        - account
+      summary: Get all the address book
+      description: To get all the address book stored in the database
+      parameters:
+        - name: size
+          in: query
+          schema:
+            type: integer
+          description: Integer value like 10, 20 ..
+          required: false
+        - name: pageNo
+          in: query
+          schema:
+            type: integer
+          description: Integer value like 1, 2, 3 ..
+          required: false
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          description: firstName or lastName
+          required: false
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+          description: ASC or DESC
+          required: false
+      responses:
+        '200': 
+          description: return array of address book matching the query parameters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AddressBook'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AddressBook'
+                xml:
+                  name: address-books
+                  wrapped: true
+        '401': 
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: no address books found
+        '500':
+          description: Internal server error
+  /account/count:
+    get:
+      tags: 
+        - account
+      summary: get the count of address book saved
+      description: To get the total count of all address book stored in the database
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Internal server error
+
+  /asset/{id}:
+    post:
+      tags:
+        - asset
+      summary: uploads an image
+      description: 'To upload the image or any file and then map it to an address book id'
+      operationId: uploadFile
+      parameters:
+        - name: id
+          in: path
+          description: address book id that needs file to be uploaded
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: image
+          image/png:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Asset uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          description: file object or address book id is invalid
+        '404':
+          description: Address book not found
+        '500':
+          description: Internal server error
+    get:
+      tags:
+        - asset
+      summary: Get the file object
+      description: To get the file object and it can be used
+      operationId: downloadFile
+      parameters:
+        - name: id
+          in: path
+          description: File id that needs to be downloaded
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Downloaded file object successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid asset id
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: File object not found
+        '500':
+          description: Internal server error
+
+  /meta-data/ref-set/{key}:
+    get:
+      tags:
+        - meta-data
+      summary: get the meta-data of the key
+      description: get the list of meta-data of the key
+      parameters:
+        - name: key
+          in: path
+          description: key to be searched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyData'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyData'
+                xml:
+                  name: key-array
+                  wrapped: true
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Key not found
+        '500':
+          description: Internal server error
+  /meta-data/ref-set:
+    post:
+      tags:
+        - meta-data
+      summary: add the ref set to the database
+      description: ''
+      requestBody:
+        description: key data object to store in ref set
+        $ref: '#/components/requestBodies/SetData'
+        required: true
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetData'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SetData'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '409':
+          description: Ref set already exists
+        '500':
+          description: Internal server error
+  /meta-data/ref-set/{id}:
+    post:
+      tags:
+        - meta-data
+      summary: add the ref term to the database
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          description: ref set id under that add the given key
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: key data object to store in ref term
+        $ref: '#/components/requestBodies/KeyData'
+        required: true
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyData'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/KeyData'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Ref Set not found
+        '409':
+          description: key already exists
+        '500':
+          description: Internal server error
+
+components: 
+  schemas:
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          format: bearer
+        tokenType:
+          type: string
+      xml:
+        name: tokenresponse
+        wrapped: true
+
+    KeyData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: bc9d8fea-34d3-4820-86c2-21a710bb7831
+        key:
+          type: string
+        description:
+          type: string
+      xml:
+        name: keydata
+        wrapped: true
+    
+    SetData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: bc9d8fea-34d3-4820-86c2-21a710bb7831
+        set:
+          type: string
+        description:
+          type: string
+      xml:
+        name: keydata
+        wrapped: true
+
+    AddressBook:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: bc9d8fea-34d3-4820-86c2-21a710bb7831
+        firstName:
+          type: string
+          example: Mukesh Kumar
+        lastName:
+          type: string
+          example: Kaniraja
+        emails:
+          type: array
+          xml:
+            name: emails
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Email'
+        addresses:
+          type: array
+          xml:
+            name: addresses
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Address'
+        phones:
+          type: array
+          xml:
+            name: phones
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Phone'
+        assetDTO:
+          $ref: '#/components/schemas/AssetDTO'
+          nullable: true
+      xml:
+        name: address-book
+        wrapped: true
+
+    Address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: 437 Lytton
+        line2:
+          type: string
+          example: Lytton
+        city:
+          type: string
+          example: Palo Alto
+        stateName:
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: '94301'
+        type: 
+          $ref: '#/components/schemas/TypeHolder'
+        country:
+          $ref: '#/components/schemas/CountryHolder'
+      xml:
+        name: address
+
+    Phone:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          example: 1234567890
+        type:
+          $ref: '#/components/schemas/TypeHolder'
+      xml:
+        name: phone
+    
+    Email:
+      type: object
+      properties:
+        emailAddress:
+          type: string
+          format: email
+          example: user@example.com
+        type:
+          $ref: '#/components/schemas/TypeHolder'
+    
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 280b1028-e26e-44e4-aabb-db5e9cad7a76
+        username:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          example: '12345'
+      xml:
+        name: user
+    
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 280b1028-e26e-44e4-aabb-db5e9cad7a76
+        username:
+          type: string
+          format: email
+          example: user@example.com
+      xml:
+        name: user
+
+    UserUpdationDTO:
+      type: object
+      properties:
+        username:
+          type: string
+          format: email
+          example: user@example.com
+          nullable: true
+        password:
+          type: string
+          example: '12345'
+          nullable: true
+      xml:
+        name: user
+
+    TypeHolder:
+      type: object
+      properties:
+        key:
+          type: string
+      xml:
+        name: type
+    
+    CountryHolder:
+      type: object
+      properties:
+        key:
+          type: string
+      xml:
+        name: country
+
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        downloadURL:
+          type: string
+        fileType:
+          type: string
+        size:
+          type: integer
+        fileContent:
+          type: string
+          nullable: true
+      xml:
+        name: asset
+    
+    CountResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+      xml:
+        name: count-response
+
+    AssetDTO:
+      type: object
+      properties:
+        fileId: 
+          type: string
+          format: uuid
+          example: 2e847c4e-b0b5-47c9-aaaa-6a240f7d75bf
+      xml:
+        name: asset-dto
+
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+
+  requestBodies:
+    User:
+      description: User object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                format: email
+                example: user@example.com
+              password:
+                type: string
+                example: '12345'
+        application/xml:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                format: email
+                example: user@example.com
+              password:
+                type: string
+                example: '12345'
+            xml:
+              name: user
+
+    AddressBook:
+      description: Address book object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+                example: Mukesh Kumar
+              lastName:
+                type: string
+                example: Kaniraja
+              emails:
+                type: array
+                xml:
+                  name: emails
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Email'
+              addresses:
+                type: array
+                xml:
+                  name: addresses
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Address'
+              phones:
+                type: array
+                xml:
+                  name: phones
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Phone'
+        application/xml:
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+                example: Mukesh Kumar
+              lastName:
+                type: string
+                example: Kaniraja
+              emails:
+                type: array
+                xml:
+                  name: emails
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Email'
+              addresses:
+                type: array
+                xml:
+                  name: addresses
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Address'
+              phones:
+                type: array
+                xml:
+                  name: phones
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Phone'
+            xml:
+              name: address-book            
+
+    KeyData:
+      description: Key object that needs to be added to the ref term table
+      content:
+        application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                description:
+                  type: string
+        application/xml:
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+              description:
+                type: string
+            xml:
+              name: keydata
+
+    SetData:
+      description: Set object that needs to be added to the ref set table
+      content:
+        application/json:
+            schema:
+              type: object
+              properties:
+                set:
+                  type: string
+                description:
+                  type: string
+        application/xml:
+          schema:
+            type: object
+            properties:
+              set:
+                type: string
+              description:
+                type: string
+            xml:
+              name: setdata
+    
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
